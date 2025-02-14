@@ -1,3 +1,5 @@
 # ninja log v5
 0	414	7612418894085274	CMakeFiles/shell.dir/src/main.cpp.obj	6374cf54dd6bc1b9
 416	634	7612418896219234	shell.exe	5e8e92b517c427b2
+3	382	7612427430937509	CMakeFiles/shell.dir/src/main.cpp.obj	6374cf54dd6bc1b9
+382	550	7612427432542574	shell.exe	5e8e92b517c427b2

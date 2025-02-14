@@ -12,7 +12,7 @@ int main() {
         std::getline(std::cin, input);
 
         std::cout << input << ": command not found" << std::endl;
-        std::cout << "$ " << input << std::endl;
+        std::cout << "$ exit 0" << std::endl;
         break;
     }
 }
