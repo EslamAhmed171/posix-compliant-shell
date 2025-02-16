@@ -1,16 +1,17 @@
 #include "BuiltInCommandHandler.h"
 #include "CommandUtils.h"
 #include <iostream>
-#include <set>
 #include <cstdlib>
 #include <unistd.h>
 #include <limits.h>
+#include <cstring>
 
 bool BuiltInCommandHandler::handleCommand(const std::string &input) {
     const std::string echoPrefix = "echo ";
     const std::string typePrefix = "type ";
     const std::string exitCommand = "exit 0";
     const std::string pwdCommand = "pwd";
+    const std::string cdCommand = "cd ";
 
     if (input.compare(0, echoPrefix.size(), echoPrefix) == 0) {
         handleEcho(input);
@@ -28,6 +29,11 @@ bool BuiltInCommandHandler::handleCommand(const std::string &input) {
     }
     else if (input == pwdCommand) {
         handlePwd();  // Handle pwd command
+        return true;
+    }
+    else if (input.compare(0, cdCommand.size(), cdCommand) == 0){
+        std::string path = input.substr(cdCommand.size());
+        handleCd(path);
         return true;
     }
 
@@ -61,5 +67,20 @@ void BuiltInCommandHandler::handlePwd() {
         std::cout << cwd << std::endl;
     } else {
         perror("pwd failed");
+    }
+}
+
+void BuiltInCommandHandler::handleCd(const std::string path) {
+    if (path.empty()) {
+        std::cerr << "cd: Missing argument" << std::endl;
+        return;
+    }
+
+    // Change the current working directory
+    if (chdir(path.c_str()) == 0) {
+        // Success: Do nothing or print a success message if you want.
+    } else {
+        // Error: Print the error message.
+        std::cerr << "cd: " << path << ": " << strerror(errno) << std::endl;
     }
 }
