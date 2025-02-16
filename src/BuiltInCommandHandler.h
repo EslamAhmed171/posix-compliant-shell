@@ -16,7 +16,7 @@ private:
     void handleType(const std::string &command);
     void handleExit();
     void handlePwd();
-    void handleCd(const std::string);
+    void handleCd(const std::string& path);
 };
 
 #endif // BUILTIN_COMMAND_HANDLER_H

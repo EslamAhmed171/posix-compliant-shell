@@ -11,7 +11,7 @@ bool BuiltInCommandHandler::handleCommand(const std::string &input) {
     const std::string typePrefix = "type ";
     const std::string exitCommand = "exit 0";
     const std::string pwdCommand = "pwd";
-    const std::string cdCommand = "cd ";
+    const std::string cdPrefix = "cd ";
 
     if (input.compare(0, echoPrefix.size(), echoPrefix) == 0) {
         handleEcho(input);
@@ -31,8 +31,8 @@ bool BuiltInCommandHandler::handleCommand(const std::string &input) {
         handlePwd();  // Handle pwd command
         return true;
     }
-    else if (input.compare(0, cdCommand.size(), cdCommand) == 0){
-        std::string path = input.substr(cdCommand.size());
+    else if (input.compare(0, cdPrefix.size(), cdPrefix) == 0){
+        std::string path = input.substr(cdPrefix.size());
         handleCd(path);
         return true;
     }
@@ -70,7 +70,7 @@ void BuiltInCommandHandler::handlePwd() {
     }
 }
 
-void BuiltInCommandHandler::handleCd(const std::string path) {
+void BuiltInCommandHandler::handleCd(const std::string& path) {
     if (path.empty()) {
         std::cerr << "cd: Missing argument" << std::endl;
         return;
