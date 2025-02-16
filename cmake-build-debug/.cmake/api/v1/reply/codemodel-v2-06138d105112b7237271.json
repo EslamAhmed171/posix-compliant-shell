@@ -6,7 +6,7 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.13"
@@ -39,7 +39,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "shell::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-shell-Debug-7cb269238025748672ea.json",
+					"jsonFile" : "target-shell-Debug-69982c6f43032d549892.json",
 					"name" : "shell",
 					"projectIndex" : 0
 				}
@@ -49,12 +49,12 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "H:/code-carfters/codecrafters-shell-cpp/cmake-build-debug",
-		"source" : "H:/code-carfters/codecrafters-shell-cpp"
+		"build" : "/mnt/h/code-carfters/codecrafters-shell-cpp/cmake-build-debug",
+		"source" : "/mnt/h/code-carfters/codecrafters-shell-cpp"
 	},
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 5
+		"minor" : 3
 	}
 }
