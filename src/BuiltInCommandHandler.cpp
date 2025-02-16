@@ -71,13 +71,17 @@ void BuiltInCommandHandler::handlePwd() {
 }
 
 void BuiltInCommandHandler::handleCd(const std::string& path) {
+    char* directory = const_cast<char*>(path.c_str());
+    if (path == "~") {
+        directory = getenv("HOME");
+    }
     if (path.empty()) {
         std::cerr << "cd: Missing argument" << std::endl;
         return;
     }
 
     // Change the current working directory
-    if (chdir(path.c_str()) == 0) {
+    if (chdir(directory) == 0) {
         // Success: Do nothing or print a success message if you want.
     } else {
         // Error: Print the error message.
