@@ -14,6 +14,7 @@ namespace CommandUtils {
 
 // Splits the input string into tokens based on whitespace.
     std::vector<std::string> tokenize(const std::string& input);
+    std::string trimAndNormalizeSpaces(const std::string& str);
 
 } // namespace CommandUtils
 

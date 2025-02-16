@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <limits.h>
 #include <cstring>
+#include <fstream>
+#include <sstream>
 
 bool BuiltInCommandHandler::handleCommand(const std::string &input) {
     const std::string echoPrefix = "echo ";
@@ -12,9 +14,11 @@ bool BuiltInCommandHandler::handleCommand(const std::string &input) {
     const std::string exitCommand = "exit 0";
     const std::string pwdCommand = "pwd";
     const std::string cdPrefix = "cd ";
+    const std::string catPrefix = "cat ";
 
     if (input.compare(0, echoPrefix.size(), echoPrefix) == 0) {
-        handleEcho(input);
+        std::string newInput = input.substr(echoPrefix.size());
+        handleEcho(newInput);
         return true;
     }
     else if (input.compare(0, typePrefix.size(), typePrefix) == 0) {
@@ -36,12 +40,26 @@ bool BuiltInCommandHandler::handleCommand(const std::string &input) {
         handleCd(path);
         return true;
     }
+    else if (input.compare(0, catPrefix.size(), catPrefix) == 0){
+        handleCat(input.substr(catPrefix.size()));
+        return true;
+    }
 
     return false;
 }
 
-void BuiltInCommandHandler::handleEcho(const std::string &input) {
-    std::cout << input.substr(5) << std::endl;
+void BuiltInCommandHandler::handleEcho(std::string &input) {
+    if (input.front() == '\''){
+        std::stringstream ss(input);
+        std::string output;
+        while (getline(ss,output, '\'')){
+            std::cout << output;
+        }
+        std::cout << std::endl;
+        return;
+    }
+    input = CommandUtils::trimAndNormalizeSpaces(input);
+    std::cout << input << std::endl;
 }
 
 void BuiltInCommandHandler::handleType(const std::string &command) {
@@ -86,5 +104,45 @@ void BuiltInCommandHandler::handleCd(const std::string& path) {
     } else {
         // Error: Print the error message.
         std::cerr << "cd: " << path << ": " << strerror(errno) << std::endl;
+
+
+    }
+}
+void BuiltInCommandHandler::handleCat(const std::string &input) {
+    std::vector<std::string> filePaths;
+    std::string currentFile;
+    bool insideQuotes = false;
+
+    // Parse the input string and extract file paths enclosed in single quotes
+    for (char c : input) {
+        if (c == '\'' && !insideQuotes) {
+            insideQuotes = true;
+            currentFile.clear();  // Start a new file name
+        }
+        else if (c == '\'' && insideQuotes) {
+            insideQuotes = false;
+            filePaths.push_back(currentFile);  // Add the current file to the list
+        }
+        else if (insideQuotes) {
+            currentFile += c;  // Collect the file path inside quotes
+        }
+    }
+
+    // If no files are found, return an error
+    if (filePaths.empty()) {
+        std::cerr << "cat: No files specified" << std::endl;
+        return;
+    }
+
+    // Handle each file
+    for (const auto &filePath : filePaths) {
+        std::ifstream file(filePath);
+
+        if (!file) {
+            std::cerr << "cat: " << filePath << ": No such file or directory" << std::endl;
+            continue;  // Skip to the next file
+        }
+
+        std::cout << file.rdbuf();  // Output the contents of the file
     }
 }

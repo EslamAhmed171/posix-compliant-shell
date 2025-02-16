@@ -41,5 +41,27 @@ namespace CommandUtils {
         }
         return tokens;
     }
+    std::string trimAndNormalizeSpaces(const std::string& str){
+        std::stringstream ss;
+        bool inSpaces = false;
+        for (char c: str){
+            if (std::isspace(c)){
+                if (!inSpaces) {
+                    ss << ' ';
+                    inSpaces = true;
+                }
+            } else{
+                ss << c;
+                inSpaces = false;
+            }
+        }
+        std::string result = ss.str();
+
+        // Remove leading and trailing spaces
+        size_t start = result.find_first_not_of(" \t\n\r\f\v");
+        size_t end = result.find_last_not_of(" \t\n\r\f\v");
+
+        return (start == std::string::npos) ? "" : result.substr(start, end - start + 1);
+    }
 
 } // namespace CommandUtils

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <set>
+#include <vector>
 
 class BuiltInCommandHandler {
 public:
@@ -12,11 +13,12 @@ public:
 private:
     // Helper functions for each built-in command.
     std::set<std::string> builtins = {"exit", "echo", "type", "pwd", "cd"};
-    void handleEcho(const std::string &input);
+    void handleEcho(std::string &input);
     void handleType(const std::string &command);
     void handleExit();
     void handlePwd();
     void handleCd(const std::string& path);
+    void handleCat(const std::string& input);
 };
 
 #endif // BUILTIN_COMMAND_HANDLER_H
