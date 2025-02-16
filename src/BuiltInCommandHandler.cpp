@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 
+
 bool BuiltInCommandHandler::handleCommand(const std::string &input) {
     const std::string echoPrefix = "echo ";
     const std::string typePrefix = "type ";
@@ -49,17 +50,28 @@ bool BuiltInCommandHandler::handleCommand(const std::string &input) {
 }
 
 void BuiltInCommandHandler::handleEcho(std::string &input) {
-    if (input.front() == '\''){
-        std::stringstream ss(input);
-        std::string output;
-        while (getline(ss,output, '\'')){
-            std::cout << output;
+    bool insideQuotes = false;
+    bool singleQuote = false;
+    bool isSpace = false;
+    std::string str;
+    for (const auto& c: input){
+        if ((c == '\'' || c == '\"') && !insideQuotes){
+            std::cout << str;
+            str.clear();
+            insideQuotes = true;
+            singleQuote = c == '\'';
+        } else if ((singleQuote && c == '\'' || !singleQuote && c == '\"') && insideQuotes){
+            std::cout << str;
+            str.clear();
+            insideQuotes = false;
+        } else{
+            if (c == ' ' && !insideQuotes && isSpace)
+                continue;
+            str += c;
+            isSpace = c == ' ';
         }
-        std::cout << std::endl;
-        return;
     }
-    input = CommandUtils::trimAndNormalizeSpaces(input);
-    std::cout << input << std::endl;
+    std::cout << str << std::endl;
 }
 
 void BuiltInCommandHandler::handleType(const std::string &command) {
