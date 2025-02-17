@@ -52,23 +52,27 @@ bool BuiltInCommandHandler::handleCommand(const std::string &input) {
 void BuiltInCommandHandler::handleEcho(std::string &input) {
     bool insideQuotes = false;
     bool singleQuote = false;
-    bool isSpace = false;
+    bool isBeforeSpace = false;
+    bool isBeforeBackslash = false;
     std::string str;
     for (const auto& c: input){
-        if ((c == '\'' || c == '\"') && !insideQuotes){
+        if ((c == '\'' || c == '\"') && !insideQuotes && !isBeforeBackslash){
             std::cout << str;
             str.clear();
             insideQuotes = true;
             singleQuote = c == '\'';
-        } else if (((singleQuote && c == '\'') || (!singleQuote && c == '\"'))){
+        } else if (((singleQuote && c == '\'') || (!singleQuote && c == '\"')) && !isBeforeBackslash){
             std::cout << str;
             str.clear();
             insideQuotes = false;
         } else{
-            if (c == ' ' && !insideQuotes && isSpace)
+            if (c == ' ' && !insideQuotes && isBeforeSpace) {
                 continue;
-            str += c;
-            isSpace = c == ' ';
+            }
+            if (c != '\\')
+                str += c;
+            isBeforeSpace = c == ' ';
+            isBeforeBackslash = c == '\\';
         }
     }
     std::cout << str << std::endl;
