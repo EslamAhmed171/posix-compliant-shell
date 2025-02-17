@@ -60,7 +60,7 @@ void BuiltInCommandHandler::handleEcho(std::string &input) {
             str.clear();
             insideQuotes = true;
             singleQuote = c == '\'';
-        } else if ((singleQuote && c == '\'' || !singleQuote && c == '\"') && insideQuotes){
+        } else if (((singleQuote && c == '\'') || (!singleQuote && c == '\"'))){
             std::cout << str;
             str.clear();
             insideQuotes = false;
@@ -124,14 +124,16 @@ void BuiltInCommandHandler::handleCat(const std::string &input) {
     std::vector<std::string> filePaths;
     std::string currentFile;
     bool insideQuotes = false;
+    bool singleQuote = false;
 
     // Parse the input string and extract file paths enclosed in single quotes
     for (char c : input) {
-        if (c == '\'' && !insideQuotes) {
+        if ((c == '\'' || c == '\"') && !insideQuotes) {
             insideQuotes = true;
+            singleQuote = c == '\'';
             currentFile.clear();  // Start a new file name
         }
-        else if (c == '\'' && insideQuotes) {
+        else if (((singleQuote && c == '\'') || (!singleQuote && c == '\"'))) {
             insideQuotes = false;
             filePaths.push_back(currentFile);  // Add the current file to the list
         }
