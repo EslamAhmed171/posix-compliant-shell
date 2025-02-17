@@ -69,7 +69,7 @@ void BuiltInCommandHandler::handleEcho(std::string &input) {
             if (c == ' ' && !insideQuotes && isBeforeSpace) {
                 continue;
             }
-            if (c != '\\')
+            if ((!insideQuotes && c != '\\') || (insideQuotes))
                 str += c;
             isBeforeSpace = c == ' ';
             isBeforeBackslash = c == '\\';
