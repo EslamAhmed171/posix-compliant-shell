@@ -41,27 +41,30 @@ namespace CommandUtils {
         }
         return tokens;
     }
-    std::string trimAndNormalizeSpaces(const std::string& str){
-        std::stringstream ss;
-        bool inSpaces = false;
-        for (char c: str){
-            if (std::isspace(c)){
-                if (!inSpaces) {
-                    ss << ' ';
-                    inSpaces = true;
-                }
-            } else{
-                ss << c;
-                inSpaces = false;
+    std::vector<std::string> tokenizeQuotedExec(const std::string& input){
+        std::vector<std::string> tokens;
+        bool insideQuotes = false;
+        bool singleQuote = false;
+        std::string token;
+        for (char c : input) {
+            if ((c == '\'' || c == '\"') && !insideQuotes) {
+                insideQuotes = true;
+                singleQuote = c == '\'';
+                token.clear();  // Start a new file name
             }
+            else if (((singleQuote && c == '\'') || (!singleQuote && c == '\"'))) {
+                insideQuotes = false;
+                tokens.push_back(token);  // Add the current file to the list
+                token.clear();
+            }
+            else {
+                if (!insideQuotes && c == ' ')
+                    continue;
+                token += c;
         }
-        std::string result = ss.str();
-
-        // Remove leading and trailing spaces
-        size_t start = result.find_first_not_of(" \t\n\r\f\v");
-        size_t end = result.find_last_not_of(" \t\n\r\f\v");
-
-        return (start == std::string::npos) ? "" : result.substr(start, end - start + 1);
+        }
+        tokens.push_back(token);
+        return tokens;
     }
 
 } // namespace CommandUtils

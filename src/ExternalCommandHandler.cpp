@@ -5,8 +5,13 @@
 #include <vector>
 
 void ExternalCommandHandler::handleCommand(const std::string &input) {
+    std::vector<std::string>  tokens;
     // Tokenize the input.
-    auto tokens = CommandUtils::tokenize(input);
+    if (input.front() == '\"' || input.front() == '\''){
+        tokens = CommandUtils::tokenizeQuotedExec(input);
+    } else {
+        tokens = CommandUtils::tokenize(input);
+    }
     if (tokens.empty()) return;
 
     // Locate the executable in the PATH.
