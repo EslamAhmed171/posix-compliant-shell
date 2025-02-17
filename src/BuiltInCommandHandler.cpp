@@ -6,8 +6,6 @@
 #include <limits.h>
 #include <cstring>
 #include <fstream>
-#include <sstream>
-
 
 bool BuiltInCommandHandler::handleCommand(const std::string &input) {
     const std::string echoPrefix = "echo ";
@@ -69,9 +67,16 @@ void BuiltInCommandHandler::handleEcho(std::string &input) {
             if (c == ' ' && !insideQuotes && isBeforeSpace) {
                 continue;
             }
-            if ((!insideQuotes && c != '\\') || (insideQuotes))
+            if ((!insideQuotes && c != '\\') ||
+            (insideQuotes && singleQuote) ||
+            (insideQuotes && c != '\\') ||
+            (insideQuotes && isBeforeBackslash))
                 str += c;
             isBeforeSpace = c == ' ';
+            if (isBeforeBackslash && c == '\\') {
+                isBeforeBackslash = false;
+                continue;
+            }
             isBeforeBackslash = c == '\\';
         }
     }
