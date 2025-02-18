@@ -88,6 +88,12 @@
 		<Unit filename="/mnt/h/code-carfters/codecrafters-shell-cpp/src/BuiltInCommandHandler.h">
 			<Option target="shell"/>
 		</Unit>
+		<Unit filename="/mnt/h/code-carfters/codecrafters-shell-cpp/src/BuiltinCompletionHandler.cpp">
+			<Option target="shell"/>
+		</Unit>
+		<Unit filename="/mnt/h/code-carfters/codecrafters-shell-cpp/src/BuiltinCompletionHandler.h">
+			<Option target="shell"/>
+		</Unit>
 		<Unit filename="/mnt/h/code-carfters/codecrafters-shell-cpp/src/CommandExecutor.cpp">
 			<Option target="shell"/>
 		</Unit>

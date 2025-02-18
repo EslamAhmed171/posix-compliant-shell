@@ -15,6 +15,8 @@ namespace CommandUtils {
 // Splits the input string into tokens based on whitespace.
     std::vector<std::string> tokenize(const std::string& input);
     std::vector<std::string> tokenizeQuotedExec(const std::string& input);
+    bool containTab(const std::string& input);
+    std::string getIncompleteCommand(const std::string& input);
 
 } // namespace CommandUtils
 

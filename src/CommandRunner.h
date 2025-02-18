@@ -6,7 +6,7 @@
 class CommandRunner {
 public:
     // Processes the input command by delegating to built-in or external handlers.
-    void processCommand(const std::string &input);
+    void processCommand(std::string &input);
 };
 
 #endif // COMMAND_RUNNER_H

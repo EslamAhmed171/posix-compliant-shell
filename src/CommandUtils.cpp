@@ -61,10 +61,24 @@ namespace CommandUtils {
                 if (!insideQuotes && c == ' ')
                     continue;
                 token += c;
-        }
+                }
         }
         tokens.push_back(token);
         return tokens;
+    }
+
+    bool containTab(const std::string& input){
+        return int(input[3]) == 9;
+    }
+
+    std::string getIncompleteCommand(const std::string& input){
+        std::string incompleteCommand;
+        for (const char& c: input){
+            if (int(c) == 9)
+                break;
+            incompleteCommand += c;
+        }
+        return incompleteCommand;
     }
 
 } // namespace CommandUtils

@@ -1,9 +1,10 @@
 #include "CommandRunner.h"
 #include "BuiltInCommandHandler.h"
+#include "BuiltinCompletionHandler.h"
 #include "ExternalCommandHandler.h"
-#include <iostream>
+#include "CommandUtils.h"
 
-void CommandRunner::processCommand(const std::string &input) {
+void CommandRunner::processCommand(std::string &input) {
     BuiltInCommandHandler builtInHandler;
     // First, try handling as a built-in.
     if (builtInHandler.handleCommand(input)) {
