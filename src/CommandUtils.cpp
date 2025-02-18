@@ -81,17 +81,20 @@ namespace CommandUtils {
         return incompleteCommand;
     }
 
-    std::string handleIncompleteExternalCommand(const std::string& incompleteCommand){
+    std::vector<std::string> handleIncompleteExternalCommand(const std::string& incompleteCommand){
         std::stringstream ss(getenv("PATH"));
+        std::vector<std::string> commands;
         std::string directory;
         while (getline(ss, directory, ':')){
-            for (const auto& entry : fs::directory_iterator(directory)) {
-                if (entry.path().filename().string().compare(0, incompleteCommand.size(), incompleteCommand) == 0) {
-                    return entry.path().filename().string() + ' ';
+            if (fs::is_directory(directory)) {
+                for (const auto &entry: fs::directory_iterator(directory)) {
+                    if (entry.path().filename().string().compare(0, incompleteCommand.size(), incompleteCommand) == 0) {
+                        commands.push_back(entry.path().filename().string());
+                    }
                 }
             }
         }
-        return "";
+        return commands;
     }
 
 

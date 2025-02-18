@@ -13,7 +13,6 @@ std::string BuiltinCompletionHandler::handleInCompleteCommand(const std::string 
     return incompleteCommand;
 }
 
-std::string BuiltinCompletionHandler::HandleExternalCommand(const std::string &incompleteExternalCommand) {
-    std::string command = CommandUtils::handleIncompleteExternalCommand(incompleteExternalCommand);
-    return command.empty() ? incompleteExternalCommand: command;
+std::vector<std::string> BuiltinCompletionHandler::HandleExternalCommand(const std::string &incompleteExternalCommand) {
+    return CommandUtils::handleIncompleteExternalCommand(incompleteExternalCommand);
 }

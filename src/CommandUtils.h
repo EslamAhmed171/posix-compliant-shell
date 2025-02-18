@@ -17,7 +17,7 @@ namespace CommandUtils {
     std::vector<std::string> tokenizeQuotedExec(const std::string& input);
     bool containTab(const std::string& input);
     std::string getIncompleteCommand(const std::string& input);
-    std::string handleIncompleteExternalCommand(const std::string& input);
+    std::vector<std::string> handleIncompleteExternalCommand(const std::string& input);
 
 } // namespace CommandUtils
 
