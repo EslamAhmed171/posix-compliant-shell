@@ -42,8 +42,19 @@ void Shell::run() {
             std::string incompleteCommand = CommandUtils::getIncompleteCommand(input);
             BuiltinCompletionHandler completionHandler;
             std::string completedCommand = completionHandler.handleInCompleteCommand(incompleteCommand);
+            if (input != completedCommand) {
+                std::cout << "\r\033[K" << "$ " << completedCommand << std::flush;
+            }
+            else{
+                completedCommand = completionHandler.HandleExternalCommand(incompleteCommand);
+                if (input != completedCommand){
+                    std::cout << "\r\033[K" << "$ " << completedCommand << std::flush;
+                }
+                else{
+                    std::cout << '\a' << std::flush;
+                }
+            }
             input = completedCommand;
-            std::cout << "\r\033[K" << "$ " << completedCommand << std::flush;
         }
         else {
             input.push_back(c);

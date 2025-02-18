@@ -1,5 +1,6 @@
 #include <iostream>
 #include "BuiltinCompletionHandler.h"
+#include "CommandUtils.h"
 
 std::string BuiltinCompletionHandler::handleInCompleteCommand(const std::string &incompleteCommand) {
     if (incompleteCommand == "ech") {
@@ -9,5 +10,10 @@ std::string BuiltinCompletionHandler::handleInCompleteCommand(const std::string 
     } else if (incompleteCommand == "typ"){
         return "type ";
     }
-    return incompleteCommand + '\a';
+    return incompleteCommand;
+}
+
+std::string BuiltinCompletionHandler::HandleExternalCommand(const std::string &incompleteExternalCommand) {
+    std::string command = CommandUtils::handleIncompleteExternalCommand(incompleteExternalCommand);
+    return command.empty() ? incompleteExternalCommand: command;
 }
