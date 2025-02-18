@@ -64,15 +64,15 @@ void Shell::run() {
                         for(int i = 0; i < customCommands.size(); i++){
                             std::cout << customCommands[i];
                             if (i != customCommands.size() - 1)
-                                std::cout << "  ";
+                                std::cout << "  "<< std::flush;
                         }
                         std::cout << std::endl;
-                        std:: cout << "$ " << input;
+                        std:: cout << "$ " << input << std::flush;
                     } else{
-                        std::cout << '\a';
+                        std::cout << '\a' << std::flush;
                     }
                 } else{
-                    std::cout << '\a';
+                    std::cout << '\a' << std::flush;
                 }
             }
         }
