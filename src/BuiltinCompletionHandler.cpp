@@ -8,5 +8,6 @@ std::string BuiltinCompletionHandler::handleInCompleteCommand(const std::string 
         return "exit ";
     } else if (incompleteCommand == "typ"){
         return "type ";
-    };
+    }
+    return incompleteCommand + '\a';
 }
