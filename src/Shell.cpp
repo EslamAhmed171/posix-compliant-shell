@@ -51,8 +51,9 @@ void Shell::run() {
             else{
                 std::vector<std::string> customCommands = completionHandler.HandleExternalCommand(incompleteCommand);
                 if (customCommands.size() == 1){
-                    std::cout << "\r\033[K" << "$ " << customCommands.front() << " " << std::flush;
-                    input = customCommands.front() + " ";
+                    std::string uniqueCommand = customCommands.front() + ' ';
+                    std::cout << "\r\033[K" << "$ " << uniqueCommand << std::flush;
+                    input = uniqueCommand;
                 } else if (customCommands.size() > 1){
                     std::string commonPrefix = CommandUtils::getCommonPrefix(customCommands);
                     if (input.size() < commonPrefix.size()){
