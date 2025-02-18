@@ -11,7 +11,7 @@ void Shell::run() {
     enableRawMode();
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
-    
+
     std::string input;
     char c;
     std::cout << "$ " << std::flush;

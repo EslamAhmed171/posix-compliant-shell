@@ -6,5 +6,7 @@ std::string BuiltinCompletionHandler::handleInCompleteCommand(const std::string 
         return "echo ";
     } else if (incompleteCommand == "exi") {
         return "exit ";
-    }
+    } else if (incompleteCommand == "typ"){
+        return "type ";
+    };
 }
