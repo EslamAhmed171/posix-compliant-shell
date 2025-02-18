@@ -97,5 +97,21 @@ namespace CommandUtils {
         return commands;
     }
 
+    std::string getCommonPrefix(const std::vector<std::string>& commands){
+        std::string common;
+        for (int i = 0; i < commands[0].size(); i++){
+            bool commonCh = true;
+            for (const auto& command: commands){
+                if (command.size() < i)
+                    return common;
+                commonCh &= command[i] == commands[0][i];
+                if (!commonCh)
+                    return common;
+            }
+            common += commands[0][i];
+        }
+        return common;
+    }
+
 
 } // namespace CommandUtils

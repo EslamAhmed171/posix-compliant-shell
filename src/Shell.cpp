@@ -17,6 +17,7 @@ void Shell::run() {
     char c;
     std::cout << "$ " << std::flush;
     bool isPrevTab = false;
+
     while (true) {
         ssize_t n = read(STDIN_FILENO, &c, 1);
         if (n <= 0) {
@@ -51,31 +52,33 @@ void Shell::run() {
                 std::vector<std::string> customCommands = completionHandler.HandleExternalCommand(incompleteCommand);
                 if (customCommands.size() == 1){
                     std::cout << "\r\033[K" << "$ " << customCommands.front() << " " << std::flush;
-                    input = customCommands.front();
-                }
-                else if (isPrevTab && customCommands.size() > 1){
-                    std::cout << std::endl;
-                    std::sort(customCommands.begin(), customCommands.end());
-                    for(int i = 0; i < customCommands.size(); i++){
-                        std::cout << customCommands[i];
-                        if (i != customCommands.size() - 1)
-                            std::cout << "  ";
+                    input = customCommands.front() + " ";
+                } else if (customCommands.size() > 1){
+                    std::string commonPrefix = CommandUtils::getCommonPrefix(customCommands);
+                    if (input.size() < commonPrefix.size()){
+                        std::cout << "\r\033[K" << "$ " << commonPrefix << std::flush;
+                        input = commonPrefix;
+                    } else if (isPrevTab){
+                        std::cout << std::endl;
+                        std::sort(customCommands.begin(), customCommands.end());
+                        for(int i = 0; i < customCommands.size(); i++){
+                            std::cout << customCommands[i];
+                            if (i != customCommands.size() - 1)
+                                std::cout << "  ";
+                        }
+                        std::cout << std::endl;
+                        std:: cout << "$ " << input;
+                    } else{
+                        std::cout << '\a';
                     }
-                    std::cout << std::endl;
-                    std:: cout << "$ " << input;
-                }
-                else{
-                    std::cout << '\a' << std::flush;
+                } else{
+                    std::cout << '\a';
                 }
             }
         }
         else {
             input.push_back(c);
             std::cout << c << std::flush;
-        }
-        if (isPrevTab && c == '\t'){
-            isPrevTab = false;
-            continue;
         }
         isPrevTab = c == '\t';
     }

@@ -18,6 +18,7 @@ namespace CommandUtils {
     bool containTab(const std::string& input);
     std::string getIncompleteCommand(const std::string& input);
     std::vector<std::string> handleIncompleteExternalCommand(const std::string& input);
+    std::string getCommonPrefix(const std::vector<std::string>& paths);
 
 } // namespace CommandUtils
 
