@@ -1,24 +1,24 @@
-#ifndef BUILTIN_COMMAND_HANDLER_H
-#define BUILTIN_COMMAND_HANDLER_H
+#ifndef BUILTINCOMMANDHANDLER_H
+#define BUILTINCOMMANDHANDLER_H
 
-#include <string>
-#include <set>
 #include <vector>
+#include <string>
+#include <unordered_set>
 
 class BuiltInCommandHandler {
 public:
-    // Returns true if the command was handled as a built-in.
-    bool handleCommand(const std::string &input);
+    bool isBuiltIn(const std::string& commandName) const;
+    void handleCommand(const std::string& commandName, const std::vector<std::string>& args);
 
 private:
-    // Helper functions for each built-in command.
-    std::set<std::string> builtins = {"exit", "echo", "type", "pwd", "cd"};
-    void handleEcho(std::string &input);
-    void handleType(const std::string &command);
-    void handleExit();
-    void handlePwd();
-    void handleCd(const std::string& path);
-    void handleCat(const std::string& input);
+    void handleEcho(const std::vector<std::string>& args);
+    void handleExit(const std::vector<std::string>& args);
+    void handleType(const std::vector<std::string>& args);
+    void handlePwd(const std::vector<std::string>& args);
+    void handleCd(const std::vector<std::string>& args);
+    void handleCat(const std::vector<std::string>& args);
+
+    std::unordered_set<std::string> builtins = {"echo", "exit", "type", "pwd", "cd"};
 };
 
-#endif // BUILTIN_COMMAND_HANDLER_H
+#endif // BUILTINCOMMANDHANDLER_H

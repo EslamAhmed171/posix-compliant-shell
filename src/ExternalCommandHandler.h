@@ -1,12 +1,15 @@
-#ifndef EXTERNAL_COMMAND_HANDLER_H
-#define EXTERNAL_COMMAND_HANDLER_H
+#ifndef EXTERNALCOMMANDHANDLER_H
+#define EXTERNALCOMMANDHANDLER_H
 
+#include <vector>
 #include <string>
+#include "CommandParser.h"
 
 class ExternalCommandHandler {
 public:
-    // Processes an external command input.
-    void handleCommand(const std::string &input);
+    void handleCommand(const std::string& commandName,
+                       const std::vector<std::string>& args,
+                       const std::vector<Redirection>& redirections);
 };
 
-#endif // EXTERNAL_COMMAND_HANDLER_H
+#endif // EXTERNALCOMMANDHANDLER_H

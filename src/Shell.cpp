@@ -1,95 +1,108 @@
 #include "Shell.h"
 #include "CommandRunner.h"
-#include "BuiltinCompletionHandler.h"
 #include "CommandUtils.h"
 #include <iostream>
-#include <string>
 #include <termios.h>
 #include <unistd.h>
 #include <algorithm>
+#include <cassert>
 
+// RAII terminal mode manager
+Shell::TerminalRAII::TerminalRAII() {
+    struct termios term{};
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+Shell::TerminalRAII::~TerminalRAII() {
+    struct termios term{};
+    tcgetattr(STDIN_FILENO, &term);
+    term.c_lflag |= (ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+}
+
+// --------------------------------------------------
 void Shell::run() {
-    enableRawMode();
+    TerminalRAII termGuard;  // Auto-resets terminal on exit
     std::cout << std::unitbuf;
     std::cerr << std::unitbuf;
 
     std::string input;
     char c;
-    std::cout << "$ " << std::flush;
     bool isPrevTab = false;
 
+    printPrompt();
+
     while (true) {
-        ssize_t n = read(STDIN_FILENO, &c, 1);
-        if (n <= 0) {
-            break;
-        }
+        const ssize_t n = read(STDIN_FILENO, &c, 1);
+        if (n <= 0) break;  // Exit on read error/EOF
 
-        // When Enter is pressed, process the command
-        if (c == '\r' || c == '\n') {
-            std::cout << std::endl;
-            CommandRunner runner;
-            runner.processCommand(input);
-            input.clear();
-            std::cout << "$ " << std::flush;
-        }
-            // Handle backspace (ASCII 127, sometimes '\b')
-        else if (c == 127 || c == '\b') {
-            if (!input.empty()) {
-                input.pop_back();
-                // Move the cursor back, erase the character, and move back again
-                std::cout << "\b \b" << std::flush;
-            }
-        }
-        else if (c == '\t') {
-            std::string incompleteCommand = CommandUtils::getIncompleteCommand(input);
-            BuiltinCompletionHandler completionHandler;
-            std::string completedCommand = completionHandler.handleInCompleteCommand(incompleteCommand);
-            if (input != completedCommand) {
-                std::cout << "\r\033[K" << "$ " << completedCommand << std::flush;
-                input = completedCommand;
-            }
-            else{
-                std::vector<std::string> customCommands = completionHandler.HandleExternalCommand(incompleteCommand);
-                if (customCommands.size() == 1){
-                    std::string uniqueCommand = customCommands.front() + ' ';
-                    std::cout << "\r\033[K" << "$ " << uniqueCommand << std::flush;
-                    input = uniqueCommand;
-                } else if (customCommands.size() > 1){
-                    std::string commonPrefix = CommandUtils::getCommonPrefix(customCommands);
-                    if (input.size() < commonPrefix.size()){
-                        std::cout << "\r\033[K" << "$ " << commonPrefix << std::flush;
-                        input = commonPrefix;
-                    } else if (isPrevTab){
-                        std::cout << std::endl;
-                        std::sort(customCommands.begin(), customCommands.end());
-                        for(int i = 0; i < customCommands.size(); i++){
-                            std::cout << customCommands[i];
-                            if (i != customCommands.size() - 1)
-                                std::cout << "  "<< std::flush;
-                        }
-                        std::cout << std::endl;
-                        std:: cout << "$ " << input << std::flush;
-                    } else{
-                        std::cout << '\a' << std::flush;
-                    }
-                } else{
-                    std::cout << '\a' << std::flush;
-                }
-            }
-        }
-        else {
-            input.push_back(c);
-            std::cout << c << std::flush;
-        }
-        isPrevTab = c == '\t';
+        handleInput(c, input, isPrevTab);
     }
-
-
 }
 
-void Shell::enableRawMode() {
-    struct termios term{};
-    tcgetattr(STDIN_FILENO, &term);
-    term.c_lflag &= ~(ICANON | ECHO); // Disable canonical mode and echo
-    tcsetattr(STDIN_FILENO, TCSANOW, &term);
+void Shell::printPrompt() const {
+    std::cout << "$ " << std::flush;
+}
+
+void Shell::handleInput(char c, std::string& input, bool& isPrevTab) {
+    if (c == '\r' || c == '\n') {
+        handleEnter(input);
+    } else if (c == 127 || c == '\b') {
+        handleBackspace(input);
+    } else if (c == '\t') {
+        handleTab(input, isPrevTab);
+    } else {
+        handleRegularChar(c, input);
+    }
+    isPrevTab = (c == '\t');
+}
+
+void Shell::handleEnter(std::string& input) {
+    std::cout << '\n';
+    CommandRunner{}.processCommand(input);
+    input.clear();
+    printPrompt();
+}
+
+void Shell::handleBackspace(std::string& input) {
+    if (!input.empty()) {
+        input.pop_back();
+        std::cout << "\b \b" << std::flush;  // Erase character visually
+    }
+}
+
+void Shell::handleTab(std::string& input, bool& isPrevTab) {
+    const std::string cleanInput = CommandUtils::sanitizeInput(input);
+    const auto candidates = completionManager.getCompletions(cleanInput);
+
+    if (candidates.empty()) {
+        std::cout << '\a' << std::flush;
+        return;
+    }
+
+    if (candidates.size() == 1) {
+        input = candidates.front() + " ";
+        std::cout << "\r\033[K$ " << input << std::flush;
+    } else {
+        const std::string commonPrefix = CommandUtils::getCommonPrefix(candidates);
+        if (!commonPrefix.empty() && cleanInput.size() < commonPrefix.size()) {
+            input = commonPrefix;
+            std::cout << "\r\033[K$ " << input << std::flush;
+        } else if (isPrevTab) {
+            std::cout << '\n';
+            for (const auto& cmd : candidates) {
+                std::cout << cmd << "  " << std::flush;
+            }
+            std::cout << "\n$ " << input << std::flush;
+        } else {
+            std::cout << '\a' << std::flush;
+        }
+    }
+}
+
+void Shell::handleRegularChar(char c, std::string& input) {
+    input.push_back(c);
+    std::cout << c << std::flush;
 }
